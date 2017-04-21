@@ -5,7 +5,7 @@ class Place(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
-        return u'{} {}'.format(self.id, self.name)
+        return u'{}. {}'.format(self.id, self.name)
 
 
 class Date(models.Model):
@@ -22,4 +22,4 @@ class Event(models.Model):
     data = models.ManyToManyField('scrapper.Date', related_name='dates')
 
     def __unicode__(self):
-        return u'{} {}'.format(self.name, self.id)
+        return u'{}. {}'.format(self.name, self.id)
