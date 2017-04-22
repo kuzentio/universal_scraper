@@ -18,55 +18,40 @@ DATES = [
     },
 ]
 
+EVENT_WITH_PLACES_AND_DATES = {
+    'event': {
+        'name': 'Django conf',
+        'place': PLACES,
+        'date': DATES,
+    }
+}
+EVENT_WITH_PLACE_AND_DATES = {
+    'event': {
+        'name': 'Python conf',
+        'place': PLACES[0],
+        'date': DATES,
+    }
+}
+
+EVENT_WITH_PLACES_AND_DATE = {
+    'event': {
+        'name': 'Python/Django conf',
+        'place': PLACES,
+        'date': DATES[0],
+    }
+}
+
+EVENT_WITH_PLACE_AND_DATE = {
+    'event': {
+        'name': 'Advance python',
+        'place': PLACES[0],
+        'date': DATES[0],
+    }
+}
+
 EVENTS = [
-    {
-        'event': {
-            'place': PLACES[0],
-        },
-    },
-    {
-        'event': {
-            'date': DATES[0],
-        },
-    },
-    {
-        'event': {
-            'place': PLACES[0],
-            'date': DATES[0],
-        },
-    },
-    {
-        'event': {
-            'place': PLACES
-        },
-    },
-    {
-        'event': {
-            'place': PLACES,
-            'date': DATES[0],
-        },
-    },
-    {
-        'event': {
-            'place': PLACES,
-            'date': DATES,
-        },
-    },
-    {
-        'event': {
-            'date': DATES,
-        },
-    },
-    {
-        'event': {
-            'place': PLACES[0],
-            'date': DATES,
-        },
-    },
-    {
-        'event': {
-            'place': PLACES,
-            'date': DATES,
-        },
-    },
+    EVENT_WITH_PLACES_AND_DATES,
+    EVENT_WITH_PLACE_AND_DATES,
+    EVENT_WITH_PLACES_AND_DATE,
+    EVENT_WITH_PLACE_AND_DATE,
 ]
