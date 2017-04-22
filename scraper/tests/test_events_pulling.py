@@ -1,12 +1,12 @@
 from django.test.testcases import TestCase
 from django.urls import reverse
 
-from scrapper.dataset import (
+from scraper.dataset import (
     EVENTS, EVENT_WITH_PLACE_AND_DATES, EVENT_WITH_PLACES_AND_DATE, EVENT_WITH_PLACES_AND_DATES,
     DATES
 )
-from scrapper.models import Event, Date, Place
-from scrapper.utils import Mapper, find
+from scraper.models import Event, Date, Place
+from scraper.utils import Mapper, find
 
 
 class TestPullingData(TestCase):

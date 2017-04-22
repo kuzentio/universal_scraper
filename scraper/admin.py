@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from scrapper.models import Date, Place, Event
+from scraper.models import Date, Place, Event
 
 
 admin.site.register(Date)

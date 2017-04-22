@@ -1,4 +1,4 @@
-from scrapper import models
+from scraper import models
 
 
 class Mapper(object):
