@@ -13,6 +13,17 @@ class Mapper(object):
             raise Exception("Not valid incoming data")
         return True
 
+    def save_to_db(self):
+        for event_data in find(self.event_key, self.dictionary):
+            event, _ = models.Event.objects.get_or_create(
+                name=event_data.get('name')
+            )
+            places = self.save_places(event_data)
+            dates = self.save_dates(event_data)
+            event.place.add(*places)
+            event.date.add(*dates)
+            event.save()
+
     def save_dates(self, event_data):
         incoming_dates = event_data.get(self.date_key)
         dates = []
@@ -30,7 +41,7 @@ class Mapper(object):
                         start=date.get('start'),
                         end=date.get('end')
                     )
-            )
+                )
         return dates
 
     def save_places(self, event_data):
@@ -50,17 +61,6 @@ class Mapper(object):
                     )
                 )
         return places
-
-    def save_to_db(self):
-        for event_data in find(self.event_key, self.dictionary):
-            event, _ = models.Event.objects.get_or_create(
-                name=event_data.get('name')
-            )
-            places = self.save_places(event_data)
-            dates = self.save_dates(event_data)
-            event.place.add(*places)
-            event.date.add(*dates)
-            event.save()
 
 
 def find(key, dictionary):
