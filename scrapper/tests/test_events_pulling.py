@@ -2,10 +2,11 @@ from django.test.testcases import TestCase
 from django.urls import reverse
 
 from scrapper.dataset import (
-    EVENTS, EVENT_WITH_PLACE_AND_DATES, EVENT_WITH_PLACES_AND_DATE, EVENT_WITH_PLACES_AND_DATES
+    EVENTS, EVENT_WITH_PLACE_AND_DATES, EVENT_WITH_PLACES_AND_DATE, EVENT_WITH_PLACES_AND_DATES,
+    DATES
 )
 from scrapper.models import Event, Date, Place
-from scrapper.utils import Mapper
+from scrapper.utils import Mapper, find
 
 
 class TestPullingData(TestCase):
@@ -54,3 +55,15 @@ class TestPullingData(TestCase):
         self.assertEqual(Date.objects.all().count(), 2)
         self.assertEqual(Event.objects.last().place.all().count(), 2)
         self.assertEqual(Event.objects.last().date.all().count(), 2)
+
+
+class TestFindInDict(TestCase):
+    def test_getting_values_by_key(self):
+        start_dates = [date for date in find('start', EVENT_WITH_PLACES_AND_DATES['event'])]
+        self.assertEquals(len(start_dates), 2)
+        self.assertEquals(start_dates, [DATES[0]['start'], DATES[1]['start']])
+
+    def test_return_all_nested(self):
+        start_dates = [date for date in find('start', EVENT_WITH_PLACES_AND_DATES)]
+        self.assertEquals(len(start_dates), 2)
+        self.assertEquals(start_dates, [DATES[0]['start'], DATES[1]['start']])
