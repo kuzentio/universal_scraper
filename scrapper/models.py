@@ -19,7 +19,7 @@ class Date(models.Model):
 class Event(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     place = models.ManyToManyField('scrapper.Place', related_name='places')
-    data = models.ManyToManyField('scrapper.Date', related_name='dates')
+    date = models.ManyToManyField('scrapper.Date', related_name='dates')
 
     def __unicode__(self):
         return u'{}. {}'.format(self.name, self.id)

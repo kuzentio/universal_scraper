@@ -59,7 +59,7 @@ class Mapper(object):
             places = self.save_places(event_data)
             dates = self.save_dates(event_data)
             event.place.add(*places)
-            event.data.add(*dates)
+            event.date.add(*dates)
             event.save()
 
 
