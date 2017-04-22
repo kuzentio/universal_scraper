@@ -1,7 +1,9 @@
 from django.test.testcases import TestCase
 from django.urls import reverse
 
-from scrapper.dataset import EVENTS, EVENT_WITH_PLACE_AND_DATES, EVENT_WITH_PLACES_AND_DATE
+from scrapper.dataset import (
+    EVENTS, EVENT_WITH_PLACE_AND_DATES, EVENT_WITH_PLACES_AND_DATE, EVENT_WITH_PLACES_AND_DATES
+)
 from scrapper.models import Event, Date, Place
 from scrapper.utils import Mapper
 
@@ -41,7 +43,14 @@ class TestPullingData(TestCase):
         self.assertEqual(Event.objects.last().date.all().count(), 1)
 
     def test_handling_multiple_places_and_dates(self):
-        pass
+        mapping = Mapper(
+            dictionary=EVENT_WITH_PLACES_AND_DATES,
+        )
+        if mapping.is_valid():
+            mapping.save_to_db()
 
-    def test_handling_direct_dates_and_places(self):
-        pass
+        self.assertEqual(Event.objects.all().count(), 1)
+        self.assertEqual(Place.objects.all().count(), 2)
+        self.assertEqual(Date.objects.all().count(), 2)
+        self.assertEqual(Event.objects.last().place.all().count(), 2)
+        self.assertEqual(Event.objects.last().date.all().count(), 2)
