@@ -4,8 +4,8 @@ from scraper import models
 
 class Mapper(object):
     model = models.Event
-    model_key = 'event'  # KEY in incoming json, it can be nested any time
-    mapping = {  # This is part of settings should looks like {field_in_json: field_in_model, or model itself, if it should be an reference to instance}
+    model_key = 'event'
+    mapping = {
         'name': 'name',
         'place': models.Place,
         'date': models.Date,
