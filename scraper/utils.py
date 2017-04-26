@@ -1,12 +1,24 @@
+from django.db.models import Model
 from scraper import models
 
 
 class Mapper(object):
+    model = models.Event
+    model_key = 'event'  # KEY in incoming json, it can be nested any time
+    mapping = {  # This is part of settings should looks like {field_in_json: field_in_model, or model itself, if it should be an reference to instance}
+        'name': 'name',
+        'place': models.Place,
+        'date': models.Date,
+    }
+
     def __init__(self, dictionary, *args, **kwargs):
         self.dictionary = dictionary
-        self.event_key = kwargs.get('event_key', 'event')
-        self.date_key = kwargs.get('date_key', 'date')
-        self.place_key = kwargs.get('place_key', 'place')
+        self.created_instances = {}
+        for k, v in self.mapping.iteritems():
+            try:
+                self.created_instances[k] = [] if issubclass(v, Model) else None
+            except TypeError:
+                pass
 
     def is_valid(self):
         if not isinstance(self.dictionary, dict):
@@ -14,53 +26,31 @@ class Mapper(object):
         return True
 
     def save_to_db(self):
-        for event_data in find(self.event_key, self.dictionary):
-            event, _ = models.Event.objects.get_or_create(
-                name=event_data.get('name')
-            )
-            places = self.save_places(event_data)
-            dates = self.save_dates(event_data)
-            event.place.add(*places)
-            event.date.add(*dates)
-            event.save()
+        for payload in find(self.model_key, self.dictionary):
+            data = {}
+            related_objects = {}
+            for key in self.mapping.keys():
+                if not payload[key].__class__.__name__ in ['dict', 'list']:
+                    data[key] = payload[key]
+                else:
+                    related_objects[key] = payload[key]
+            self.proceed_relation_objects(related_objects)
+            node, _ = self.model.objects.get_or_create(**data)
+            record, _ = self.model.objects.update_or_create(id=node.id, defaults=self.created_instances)
 
-    def save_dates(self, event_data):
-        incoming_dates = event_data.get(self.date_key)
-        dates = []
-        if isinstance(incoming_dates, dict):
-            dates.append(
-                models.Date.objects.create(
-                    start=incoming_dates.get('start'),
-                    end=incoming_dates.get('end')
-                )
-            )
-        if isinstance(incoming_dates, list):
-            for date in incoming_dates:
-                dates.append(
-                    models.Date.objects.create(
-                        start=date.get('start'),
-                        end=date.get('end')
-                    )
-                )
-        return dates
+            return record
 
-    def save_places(self, event_data):
-        incoming_places = event_data.get(self.place_key)
-        places = []
-        if isinstance(incoming_places, dict):
-            places.append(
-                models.Place.objects.create(
-                    name=incoming_places.get('name'),
+    def proceed_relation_objects(self, objects):
+        for object_key in objects:
+            if not isinstance(objects[object_key], list):
+                instance, _ = self.mapping[object_key].objects.get_or_create(
+                    **objects[object_key]
                 )
-            )
-        if isinstance(incoming_places, list):
-            for place in incoming_places:
-                places.append(
-                    models.Place.objects.create(
-                        name=place.get('name'),
-                    )
-                )
-        return places
+                self.created_instances[object_key].append(instance.pk)
+
+            else:
+                for obj in objects[object_key]:
+                    self.proceed_relation_objects({object_key: obj})
 
 
 def find(key, dictionary):
