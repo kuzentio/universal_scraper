@@ -38,8 +38,6 @@ class Mapper(object):
             node, _ = self.model.objects.get_or_create(**data)
             record, _ = self.model.objects.update_or_create(id=node.id, defaults=self.created_instances)
 
-            return record
-
     def proceed_relation_objects(self, objects):
         for object_key in objects:
             if not isinstance(objects[object_key], list):
